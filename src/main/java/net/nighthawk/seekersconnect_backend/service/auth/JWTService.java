@@ -3,6 +3,7 @@ package net.nighthawk.seekersconnect_backend.service.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import net.nighthawk.seekersconnect_backend.utils.UserRoles;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +31,11 @@ public class JWTService {
         }
     }
 
-    public String generateToken(String userName) {
+    public String generateToken(String userName, String role) {
 
         Map<String, Object> claims = new HashMap<>();
+
+        claims.put("role", role);
 
         return Jwts.builder()
                 .claims()
@@ -44,6 +47,11 @@ public class JWTService {
                 .signWith(getKey())
                 .compact();
 
+    }
+
+    public UserRoles extractRole(String jwtToken) {
+        Claims claims = extractAllClaims(jwtToken);
+        return UserRoles.valueOf(claims.get("role", String.class));
     }
 
     private SecretKey getKey() {
