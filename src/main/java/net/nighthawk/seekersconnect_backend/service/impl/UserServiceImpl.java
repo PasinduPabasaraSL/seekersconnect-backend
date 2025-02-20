@@ -1,12 +1,12 @@
 package net.nighthawk.seekersconnect_backend.service.impl;
 
-import net.nighthawk.seekersconnect_backend.dto.LoginDto;
 import net.nighthawk.seekersconnect_backend.dto.UserDto;
 import net.nighthawk.seekersconnect_backend.entity.User;
 import net.nighthawk.seekersconnect_backend.repo.UserRepo;
 import net.nighthawk.seekersconnect_backend.service.UserService;
 import net.nighthawk.seekersconnect_backend.service.auth.JWTService;
 import net.nighthawk.seekersconnect_backend.utils.Converter;
+import net.nighthawk.seekersconnect_backend.utils.UserRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,16 +39,23 @@ public class UserServiceImpl implements UserService {
         userRepo.save(converter.userDtoToEntity(userDto));
     }
 
-    public String login(LoginDto loginDto) {
+    public String login(UserDto userDto) {
         Authentication auth =
                 authManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
-                                loginDto.getUsername(), loginDto.getPassword()
+                                userDto.getUsername(), userDto.getPassword()
                         )
                 );
 
-        if (auth.isAuthenticated())
-            return jwtService.generateToken(loginDto.getUsername());
+        if (auth.isAuthenticated()) {
+            String token = jwtService.generateToken(userDto.getUsername(), userDto.getRole().toString());
+
+            // Extract role after generating the token (for debugging or future logic)
+            UserRoles extractedRole = jwtService.extractRole(token);
+            System.out.println("Extracted Role from Token: " + extractedRole);
+
+            return token;
+        }
 
         return "Invalid username or password";
 
@@ -70,6 +77,5 @@ public class UserServiceImpl implements UserService {
 
         return converter.entityToUserDto(user);
     }
-
 
 }
