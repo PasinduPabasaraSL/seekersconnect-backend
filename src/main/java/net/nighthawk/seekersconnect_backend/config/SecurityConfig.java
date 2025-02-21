@@ -39,9 +39,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/v1/user/register", "/api/v1/user/login", "/api/v1/health").permitAll()
-                        .requestMatchers("/api/v1/user/delete/**").authenticated()  // Allow any authenticated user to access delete endpoint
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/v1/user/**").hasAuthority("ADMIN")   // Other user endpoints still admin-only
+                        .requestMatchers("/api/v1/user/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/v1/employer/**").hasAuthority("EMPLOYER")
                         .requestMatchers("/api/v1/trainer/**").hasAuthority("TRAINER")
                         .requestMatchers("/api/v1/seeker/**").hasAuthority("JOB_SEEKER")

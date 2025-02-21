@@ -50,7 +50,6 @@ public class UserServiceImpl implements UserService {
         if (auth.isAuthenticated()) {
             String token = jwtService.generateToken(userDto.getUsername(), userDto.getRole().toString());
 
-            // Extract role after generating the token (for debugging or future logic)
             UserRoles extractedRole = jwtService.extractRole(token);
             System.out.println("Extracted Role from Token: " + extractedRole);
 
